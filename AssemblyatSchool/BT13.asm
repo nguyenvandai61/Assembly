@@ -42,7 +42,7 @@
             
             mov bl, 16
             mul bl
-            
+            xor ah, ah
             add ax, cx
             mov so1, ax
             jmp nhap1
@@ -77,7 +77,7 @@
             
             mov bl, 16
             mul bl
-            
+            xor ch, ch
             add ax, cx
             mov so2, ax
             jmp nhap2
@@ -143,13 +143,5 @@
             mov ah, 2
             int 21h
             loop inra2
-      
-             
-     
-      
-           
-            
-                
-         
             
 end
