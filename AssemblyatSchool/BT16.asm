@@ -6,89 +6,44 @@
     msg3 DB 10, 13, 'Uoc cua 2 so: $' 
     so1 dw 0
     so2 dw 0
-.code
-    main proc
-        
-        mov ax, @data
-        mov ds, ax     
-        
-        
-        lea dx, msg1
+    res dw 0
+    
+    @print macro msg
+        lea dx, msg
         mov ah, 09h
         int 21h
+    endm
+    
+    @input macro so, outnhap
+        local nhap
         
-        nhap1:
+        nhap:
             mov ah, 01h
             int 21h
             
             cmp al, 13
             
-            je outnhap1
+            je outnhap
             
             cmp al, '-'
-            je nhap1 
+            je nhap
             
             sub al, 30h
             mov ah, 0
             mov cx, ax
             mov bx, 10
-            mov ax, so1
+            mov ax, so
             mul bx
             add ax, cx
-            mov so1, ax
+            mov so, ax
             
-            jmp nhap1 
-            
-        outnhap1: 
-            lea dx, msg2
-            mov ah, 09h
-            int 21h
-    
-         
-            
-        nhap2:
-            mov ah, 1
-            int 21h
-            
-            cmp al, 13
-            
-            je outnhap2
-            
-            cmp al, '-'
-            je nhap2 
-            
-            sub al, 30h
-            mov ah, 0
-            mov cx, ax
-            mov bx, 10
-            mov ax, so2
-            mul bx
-            add ax, cx
-            mov so2, ax
-            
-            jmp nhap2
-            
-        outnhap2:
-            lea dx, msg3
-            mov ah, 09h
-            int 21h 
-            
-        Solve:
-            mov ax, so1
-            mov bx, so2
-                          
-            lap:
-                mov dx, 0
-                cmp bx, 0
-                je endLoop 
-            
-                div bx
-                mov ax, bx
-                mov bx, dx
-                jmp lap
-       endLoop:  
+            jmp nhap
+       endm
+       
+       @printdec macro num
+            local chia, inso
             mov cx, 0
-                mov bx, 10
+            mov bx, 10
                 
             chia:
                 mov dx, 0
@@ -104,10 +59,48 @@
                     mov ah, 2
                     int 21h
                     loop inso
+           
+       endm
        
-                
        
-    
+       @GCD macro so1, so2, res
+            mov ax, so1
+            mov bx, so2
+                          
+            lap:
+                mov dx, 0
+                cmp bx, 0
+                je endLoop 
+            
+                div bx
+                mov ax, bx
+                mov bx, dx
+                jmp lap
+       endLoop:
+        mov res, ax
+       endm
+.code
+    main proc
+        
+        mov ax, @data
+        mov ds, ax     
+        
+        @print msg1    
+        @input so1, outnhap1
+        
+            
+        outnhap1: 
+        @print msg2
+        @input so2, outnhap2    
+        
+         
+     
+        outnhap2:
+        @print msg3
+        @GCD so1, so2, res    
+       
+        @printdec res   
+
         mov ah, 4Ch
         int 21h     
     

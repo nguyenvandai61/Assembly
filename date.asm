@@ -14,10 +14,16 @@
     t4 db 'Thu tu $'
     t5 db 'Thu nam $'
     t6 db 'Thu sau $'
-    t7 db 'Thu bay $'
-.code
-
+    t7 db 'Thu bay $'   
     
+    
+     ;------ Thong bao ------- 
+    print macro thongbao
+        lea dx, thongbao
+        mov ah, 9
+        int 21h
+    print endm
+      
     ;------ In ngay thang nam -------
    printDate macro ng, th, n
         
@@ -83,6 +89,9 @@
         int 21h
         
      endm
+.code
+
+   
      
                      
     
@@ -113,13 +122,7 @@
     main endp
     
     
-    ;------ Thong bao ------- 
-    print macro thongbao
-        lea dx, thongbao
-        mov ah, 9
-        int 21h
-    print endm
-    
+  
     
     ;------ In so thap phan -------
     printDec proc

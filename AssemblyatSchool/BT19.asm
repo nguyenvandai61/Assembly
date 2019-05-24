@@ -4,24 +4,20 @@
     msg1 db 'Nhap so: $'
     msg2 db 10, 13, 'Tong chu so: $'
     str db 100,?,101 dup('$')
-                             
-    
-   
-.code
-    main proc
-        mov ax, @data
-        mov ds, ax
-        
-        ; In ra msg1
+    sum db 0                         
+    @print macro msg
         mov ah, 09h
-        lea dx, msg1
+        lea dx, msg
         int 21h
-        
-        ; Nhap so
+    endm
+    
+    @scan macro str
         mov ah, 0Ah
         lea dx, str
         int 21h
-        
+    endm
+    
+    @sum macro str, sum
         ; Xu ly
         lea si, str+1 
         xor cx, cx
@@ -35,16 +31,13 @@
             add bl, dl
             inc si
             loop lap         
-            
-        ; In ra msg2
-        lea dx, msg2
-        mov ah, 09h
-        int 21h
-        
-        
-        ; Chuyen bx
-        xor ax, ax
-            mov al, bl
+        mov sum, bl    
+    endm
+         
+    
+    @printdec macro num ; Chuyen bx
+            xor ax, ax
+            mov al, num 
             mov cx, 0
             mov bx, 10
             LapDem1:
@@ -60,7 +53,28 @@
                 pop dx
                 or dl, '0'
                 int 21h 
-                loop LapDem2;
+                loop LapDem2;     
+     endm    
+    
+        
+   
+.code
+    main proc
+        mov ax, @data
+        mov ds, ax
+        
+        ; In ra msg1
+        @print msg1
+        
+        ; Nhap so
+        @scan str
+        
+        ; In ra msg2
+        @print msg2
+        
+        @sum str, sum
+        @printdec sum
+        
         
          mov ah, 4ch
          int 21h

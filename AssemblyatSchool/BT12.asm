@@ -6,29 +6,29 @@
     msg3 db 10,13,'Ma ASCII dang Dec: $'
     msg4 db 10,13,'Ma ASCII dang Bin: $'
     kyTu db ?
-.code 
-    main proc
-        mov ax, @data
-        mov ds, ax
-        
+    base db ?
+    
+    @print macro msg
         mov ah, 9
-        lea dx, msg1
+        lea dx, msg
         int 21h
+    endm
+    
+    @scan macro char
         
         mov ah, 01h
-        int 21h           
-        
-        mov kyTu, al        
-        ; Xu ly HEX ; ;
-        mov ah, 9
-        lea dx, msg2
         int 21h
-            
+        mov char, al     
+    endm
+    
+    
+    @convert macro char, base  
+        local chia, inso,thoat     
             xor ax, ax
             mov al, kyTu
             xor cx, cx
             mov cl, 0
-            mov bl, 16
+            mov bl, base
                 
             chia:
                 mov dx, 0
@@ -45,78 +45,56 @@
                     int 21h
                     loop inso
            
-            mov ah, 2    
+            mov ah, 2  
+            cmp base, 10
+            mov dl, 'd'
+            je thoat
+            mov dl, 'b'
             
-             mov dl, 104
+            thoat:
             int 21h     
+     endm             
+    
+.code 
+    main proc
+        mov ax, @data
+        mov ds, ax
+        
+        
+        @print msg1
+        @scan kyTu
+                
+        ; Xu ly HEX ; ;
+        @print msg2
+        xor bx,bx
+        mov bh,kytu 
+        mov cx,2
+      Lap3:
+        mov dl,bh 
+        shr dl,4
+        cmp dl,10
+        jb InSo
+        add dl,37h
+        jmp InChu
+      InSo: 
+        add dl,30h
+      InChu:
+        mov ah,02
+        int 21h
+        shl bx,4     
+        loop Lap3 
             
                            
             
         ; Xu ly DEC
-        DECC:
-        mov ah, 09h    
-        lea dx, msg3
-        int 21h
-        
-        
-                    
-            xor ax, ax
-            xor dx, dx
-            xor cx, cx
-            mov cl, 0
-            mov bl, 10
-            
-            mov al, kyTu
-                
-            chia2:
-                mov dx, 0
-                div bx
-                add dx, 30h
-                push dx
-                inc cl
-                cmp al, 0
-        je inso2
-                jmp chia2
-                inso2:
-                    pop dx
-                    mov ah, 2
-                    int 21h
-                    loop inso2
-            mov dl, 'd'
-            mov ah, 2
-            int 21h
-
-          
+        @print msg3
+         mov base, 10
+         @convert kyTu, base
           ;   BIN
-        
-        mov ah, 9
-        lea dx, msg4
-        int 21h
-            
-            xor ax, ax
-            mov al, kyTu
-            mov cl, 0
-            mov bl, 2
-                
-            chia3:
-                mov dx, 0
-                div bx
-                add dx, 30h
-                push dx
-                inc cx
-                cmp ax, 0
-        je inso3
-                jmp chia3
-                inso3:
-                    pop dx
-                    mov ah, 2
-                    int 21h
-                    loop inso3
-           
-            mov ah, 2    
-            
-             mov dl, 'b'
-            int 21h     
+        @print msg4
+         mov base, 2
+         @convert kyTu, base
+                   
         
         
                      

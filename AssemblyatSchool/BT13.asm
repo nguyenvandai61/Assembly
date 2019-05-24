@@ -42,7 +42,7 @@
             
             mov bl, 16
             mul bl
-            xor ah, ah
+            xor ch, ch
             add ax, cx
             mov so1, ax
             jmp nhap1
